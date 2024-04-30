@@ -1,0 +1,22 @@
+@ require c:load
+
+define function place_search_sign {
+    setblock 9 15 10 air
+    setblock 9 15 10 minecraft:oak_wall_sign[facing=north]{
+        Text1:'{"text":"", "clickEvent":{"action":"run_command","value":"function c:search/search"}}',
+        Text2:'{"text":"Search", "bold":"true", "color":"white"}',
+        Text3:'{"text":""}',
+        Text4:'{"text":""}'
+    }
+}
+
+define function lobby {
+    tp @a 8.5 14 8.5 0 0
+    set lobby->global = 1
+    set search->global = 0
+}
+
+define function load {
+    @ tag load
+    function c:lobby/place_search_sign
+}

@@ -1,0 +1,26 @@
+@tag load
+
+say bnuhh
+
+define objective global
+global var default_gamemode = "adventure"
+
+define function one_time_setup {
+    advancement grant @s only minecraft:recipes/transportation/oak_boat
+    advancement grant @s only minecraft:recipes/transportation/spruce_boat
+    advancement grant @s only minecraft:recipes/transportation/birch_boat
+    advancement grant @s only minecraft:recipes/transportation/jungle_boat
+    advancement grant @s only minecraft:recipes/transportation/acacia_boat
+    advancement grant @s only minecraft:recipes/transportation/dark_oak_boat
+    
+    set lobby->global = 1
+    set search->global = 0
+    
+    set hasPlayed->global = 1
+    say one time setup
+}
+
+as @a unless score hasPlayed global matches 1 function /one_time_setup
+
+
+

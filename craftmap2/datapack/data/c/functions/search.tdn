@@ -1,0 +1,195 @@
+@ require c:load
+@ require c:saved_inventory
+@ require c:timer
+
+global var item_list = [
+    item<ender_eye>,
+    item<white_bed>,
+    item<respawn_anchor>,
+    item<iron_bars>,
+    item<coarse_dirt>,
+    item<iron_axe>,
+    item<shield>,
+    item<bread>,
+    item<golden_apple>,
+    item<bow>,
+    item<bucket>,
+    item<oak_boat>,
+    item<golden_carrot>,
+    item<golden_pickaxe>,
+    item<golden_helmet>,
+    item<flint_and_steel>,
+    item<nether_bricks>
+]
+
+var inv = new saved_inventory(
+    "search",
+    coordinates<-8 5 10>,
+    coordinates<-8 5 9>,
+    coordinates<-8 5 8>
+)
+
+var timer = new timer()
+
+define function place_sign_start {
+    setblock 6 13 20 air
+    setblock 6 13 20 minecraft:oak_wall_sign[facing=east]{
+        Text1:'{"clickEvent":{"action":"run_command","value":"function c:search/start"},"text":""}',
+        Text2:'{"text":"Start", "bold":"true", "color":"white"}',
+        Text3:'{"text":""}',
+        Text4:'{"text":""}'
+    }
+}
+
+define function place_sign_exit {
+    setblock 10 13 20 air
+    setblock 10 13 20 minecraft:oak_wall_sign[facing=west]{
+        Text1:'{"clickEvent":{"action":"run_command","value":"function c:search/exit"},"text":""}',
+        Text2:'{"text":"Exit", "bold":"true", "color":"white"}',
+        Text3:'{"text":""}',
+        Text4:'{"text":""}'
+    }
+}
+
+define function place_sign_inv_edit {
+    setblock 8 13 22 air
+    setblock 8 13 22 minecraft:oak_wall_sign[facing=north]{
+        Text1:'{"text":"","clickEvent":{"action":"run_command","value":"function c:search/inv_edit"}}',
+        Text2:'{"text":"Edit Inventory", "bold":"true", "color":"white"}',
+        Text3:'{"text":""}',
+        Text4:'{"text":""}'
+    }
+}
+
+define function place_sign_inv_save {
+    setblock 8 13 22 air
+    setblock 8 13 22 minecraft:oak_wall_sign[facing=north]{
+        Text1:'{"text":"","clickEvent":{"action":"run_command","value":"function c:search/inv_save"}}',
+        Text2:'{"text":"Save","color":"green","bold":"true"}',
+        Text3:'{"text":""}',
+        Text4:'{"text":""}'
+    }
+}
+
+define function place_sign_inv_cancel {
+    setblock 9 13 22 air
+    setblock 9 13 22 minecraft:oak_wall_sign[facing=north]{
+        Text1:'{"text":"","clickEvent":{"action":"run_command","value":"function c:search/inv_cancel"}}',
+        Text2:'{"text":"Cancel","color":"red","bold":"true"}',
+        Text3:'{"text":""}',
+        Text4:'{"text":""}'
+    }
+}
+
+define function setup_objectives {
+    scoreboard objectives add goal_list dummy "Items Left"
+    for (item in item_list) {
+        var item_name
+        if (item.itemType.body.length < 17) {
+            eval item_name = item.itemType.body
+        } else {
+            eval item_name = item.itemType.body.substring(0, 16)
+        }
+        scoreboard players set $item_name goal_list 1
+        var criteria = "minecraft.crafted:" + item.itemType
+        eval criteria = criteria.replace("minecraft:", "minecraft.")
+        scoreboard objectives add $item_name $criteria
+    }
+}
+
+define function inv_save {
+    eval inv.save()
+    fill 9 14 22 7 12 22 air
+    function c:search/place_sign_inv_edit
+}
+
+define function inv_cancel {
+    eval inv.cancel()
+    fill 9 14 22 7 12 22 air
+    function c:search/place_sign_inv_edit
+}
+
+define function reset {
+    scoreboard objectives setdisplay sidebar
+    gamemode $default_gamemode
+    function c:search/inv_cancel
+    eval timer.srigt_zero()
+    
+    for (item in item_list) {
+        var item_name
+        if (item.itemType.body.length < 17) {
+            eval item_name = item.itemType.body
+        } else {
+            eval item_name = item.itemType.body.substring(0, 16)
+        }
+        scoreboard players set $item_name goal_list 0
+        as @a scoreboard players set @s $item_name 0
+    }
+}
+
+define function inv_edit {
+    function c:search/reset
+    eval timer.srigt_zero()
+    eval inv.edit()
+    fill 9 14 22 7 12 22 air
+    function c:search/place_sign_inv_save
+    function c:search/place_sign_inv_cancel
+}
+
+define function start {
+    function c:search/reset
+    eval inv.load()
+    eval timer.srigt_start()
+    
+    scoreboard objectives setdisplay sidebar goal_list
+}
+
+define function exit {
+    function c:search/reset
+    function c:lobby/lobby
+}
+
+define function finish {
+    eval timer.srigt_stop()
+}
+
+define function search {
+    tp @a 8.5 12 20.5 90 0
+    set lobby->global = 0
+    set search->global = 1
+}
+
+define function load {
+    @ tag load
+    function c:search/place_sign_start
+    function c:search/place_sign_exit
+    function c:search/place_sign_inv_edit
+    function c:search/setup_objectives
+}
+
+define function tick {
+    @ tag tick
+    
+    define function con_tick {
+        if score isInvEditing global matches 1 function c:search/place_sign_inv_save
+        if score isInvEditing global matches 1 function c:search/place_sign_inv_cancel
+        kill @e[type=item]
+        set searchFinished->global = 1
+        for (item in item_list) {
+            var item_name = item.itemType.body
+            if (item.itemType.body.length < 17) {
+                eval item_name = item.itemType.body
+            } else {
+                eval item_name = item.itemType.body.substring(0, 16)
+            }
+            as @a if score @s $item_name matches 1.. scoreboard players reset $item_name goal_list
+            as @a unless score @s $item_name matches 1.. set searchFinished->global = 0
+            clear @a $item
+        }
+        if score searchFinished global matches 1 function c:search/finish
+    }
+    
+    if score search global matches 1 function /con_tick
+
+    
+}

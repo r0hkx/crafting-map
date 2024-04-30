@@ -1,0 +1,103 @@
+@tag load
+
+define global class saved_inventory {
+    local var m_namespace : resource
+    
+    local var m_inv_hotbar_box : coordinates
+    local var m_inv_offhand_box : coordinates
+    local var m_inv_upper_box : coordinates
+
+    private p_save() {
+        # place shulkers if they don't exist
+        unless block $m_inv_hotbar_box yellow_shulker_box setblock $m_inv_hotbar_box yellow_shulker_box
+        unless block $m_inv_offhand_box yellow_shulker_box setblock $m_inv_offhand_box yellow_shulker_box
+        unless block $m_inv_upper_box yellow_shulker_box setblock $m_inv_upper_box yellow_shulker_box
+        
+        # remove existing items in shulkers
+        data remove block $m_inv_hotbar_box Items
+        data remove block $m_inv_offhand_box Items
+        data remove block $m_inv_upper_box Items
+
+        # copy player inv to storage
+        as @a data modify storage $m_namespace Inventory set from entity @s Inventory
+        
+        # copy storage to hotbar box
+        for (var i = 0; i < 9; i++) {
+            var b = (tag_byte)i
+            as @a data modify block $m_inv_hotbar_box Items append from storage $m_namespace Inventory[{Slot:$b}]
+            data remove storage $m_namespace Inventory[{Slot:$b}]
+        }
+        
+        # copy storage to offhand box
+        data modify storage $m_namespace Inventory[{Slot:-106b}] merge value {Slot:0b}
+        data modify block $m_inv_offhand_box Items append from storage $m_namespace Inventory[{Slot:0b}]
+        data remove storage $m_namespace Inventory[{Slot:0b}]
+        
+        # copy storage to upper inventory box
+        for (var i = 9; i < 36; i++) {
+            var b = (tag_byte)i
+            var c = i - 9
+            eval c = (tag_byte)c
+            data modify storage $m_namespace Inventory[{Slot:$b}] merge value {Slot:$c}
+            as @a data modify block $m_inv_upper_box Items append from storage $m_namespace Inventory[{Slot:$c}]
+            data remove storage $m_namespace Inventory[{Slot:$b}]
+        }
+    }
+        
+    private sound() {
+        for (var i = 0; i < 5; i++) {
+            var r = new Random()
+            var real = r.nextReal()
+            eval real /= 5
+            eval real += 1.8
+            playsound minecraft:entity.item.pickup master @a ~ ~ ~ .2 $real
+        }
+    }
+    
+    public load() {
+        eval sound()
+        as @a clear @s
+        loot replace entity @a container.0 mine $m_inv_hotbar_box air{drop_contents:1b}
+        loot replace entity @a weapon.offhand mine $m_inv_offhand_box air{drop_contents:1b}
+        loot replace entity @a container.9 mine $m_inv_upper_box air{drop_contents:1b}
+    }
+    
+    public edit() {
+        eval load()
+        as @a gamemode creative @s
+        set isInvEditing->global = 1
+    }
+    
+    public save() {
+        eval p_save()
+        as @a clear @s
+        as @a gamemode $default_gamemode
+        set isInvEditing->global = 0
+    }
+    
+    public cancel() {
+        as @a clear @s
+        as @a gamemode $default_gamemode
+        set isInvEditing->global = 0
+    }
+    
+    public new(
+        namespace : string,
+        inv_hotbar_box : coordinates,
+        inv_offhand_box : coordinates,
+        inv_upper_box : coordinates) {
+        var s_namespace = "c:" + namespace
+        eval m_namespace = (resource)s_namespace
+        eval m_inv_hotbar_box = inv_hotbar_box
+        eval m_inv_offhand_box = inv_offhand_box
+        eval m_inv_upper_box = inv_upper_box
+    }
+}
+
+
+#var s = new saved_inventory(
+#    "test",
+#    coordinates<-4 4 11>,
+#    coordinates<-4 4 10>,
+#    coordinates<-4 4 9>
+#)

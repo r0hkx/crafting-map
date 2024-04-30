@@ -1,0 +1,22 @@
+@tag load
+
+define global class timer {
+    
+    public srigt_start() {
+        as @a at @s playsound speedrunigt:start_practice master @s ~ ~ ~ 1 1 1
+    }
+    
+    public srigt_stop() {
+        as @a at @s playsound speedrunigt:stop_practice master @s ~ ~ ~ 1 1 1
+    }
+    
+    public srigt_zero() {
+        eval srigt_stop()
+        eval srigt_start()
+        eval srigt_stop()
+    }
+    
+    public new() {
+        
+    }
+}
