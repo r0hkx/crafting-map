@@ -1,0 +1,10 @@
+{
+  "values": [
+    "c:load",
+    "c:saved_inventory",
+    "c:timer",
+    "c:lobby/load",
+    "c:search/load",
+    "c:trident/create_objectives"
+  ]
+}
