@@ -3,10 +3,10 @@
   "datapack/data/minecraft/loot_tables/blocks/yellow_shulker_box.json": 405700809,
   "datapack/data/c/functions/main.tdn": 314677538,
   "datapack/data/c/functions/timer.tdn": 1596930201,
-  "datapack/data/c/functions/search.tdn": -158471268,
-  "datapack/data/c/functions/saved_inventory.tdn": 647260296,
+  "datapack/data/c/functions/search.tdn": 621573285,
+  "datapack/data/c/functions/saved_inventory.tdn": -770231431,
   "datapack/data/c/functions/tests.tdn": 1,
   "datapack/data/c/functions/lobby.tdn": 1258317745,
-  "datapack/data/c/functions/load.tdn": 178922306,
+  "datapack/data/c/functions/load.tdn": 2109024205,
   "datapack/data/c/functions/test.tdn": -747588831
 }

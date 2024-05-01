@@ -1,6 +1,6 @@
 @tag load
 
-say bnuhh
+say bnuhh buh
 
 define objective global
 global var default_gamemode = "adventure"

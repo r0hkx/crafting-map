@@ -2,7 +2,7 @@
   "input-resources": "(automatically selected by Trident-UI)",
   "output": {
     "directories": {
-      "data-pack": "C:\\Users\\Ian\\Desktop\\MultiMC\\instances\\1.16.1_ranked\\.minecraft\\saves\\r0hkxs crafting map\\datapacks\\craftmap2",
+      "data-pack": "C:\\Users\\Ian\\Desktop\\MultiMC\\instances\\1.16.1_ranked\\.minecraft\\saves\\crafting-map\\datapacks\\craftmap2",
       "resource-pack": "C:\\Users\\Ian\\Desktop\\MultiMC\\instances\\1.16.1_ranked\\.minecraft\\saves\\r0hkxs crafting map\\datapacks"
     },
     "clean-directories": {

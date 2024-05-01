@@ -19,7 +19,8 @@ global var item_list = [
     item<golden_pickaxe>,
     item<golden_helmet>,
     item<flint_and_steel>,
-    item<nether_bricks>
+    item<nether_bricks>,
+    item<tnt>
 ]
 
 var inv = new saved_inventory(
@@ -27,6 +28,13 @@ var inv = new saved_inventory(
     coordinates<-8 5 10>,
     coordinates<-8 5 9>,
     coordinates<-8 5 8>
+)
+
+var goals = new saved_inventory(
+    "search_goals",
+    coordinates<-9 5 10>,
+    coordinates<-9 5 9>,
+    coordinates<-9 5 8>
 )
 
 var timer = new timer()
@@ -81,19 +89,64 @@ define function place_sign_inv_cancel {
     }
 }
 
+define function place_sign_goals_edit {
+    setblock 8 12 22 air
+    setblock 8 12 22 minecraft:oak_wall_sign[facing=north]{
+        Text1:'{"text":"","clickEvent":{"action":"run_command","value":"function c:search/goals_edit"}}',
+        Text2:'{"text":"Edit Goal", "bold":"true", "color":"white"}',
+        Text3:'{"text":"Crafts", "bold":"true", "color":"white"}',
+        Text4:'{"text":""}'
+    }
+}
+
+define function place_sign_goals_save {
+    setblock 8 12 22 air
+    setblock 8 12 22 minecraft:oak_wall_sign[facing=north]{
+        Text1:'{"text":"","clickEvent":{"action":"run_command","value":"function c:search/goals_save"}}',
+        Text2:'{"text":"Save", "bold":"true", "color":"green"}',
+        Text3:'{"text":""}',
+        Text4:'{"text":""}'
+    }
+}
+
+define function place_sign_goals_cancel {
+    setblock 9 12 22 air
+    setblock 9 12 22 minecraft:oak_wall_sign[facing=north]{
+        Text1:'{"text":"","clickEvent":{"action":"run_command","value":"function c:search/goals_cancel"}}',
+        Text2:'{"text":"Cancel", "bold":"true", "color":"red"}',
+        Text3:'{"text":""}',
+        Text4:'{"text":""}'
+    }
+}
+
 define function setup_objectives {
+    
+    # create goal_list objective
     scoreboard objectives add goal_list dummy "Items Left"
+    
+    # loop over all items
     for (item in item_list) {
-        var item_name
+        
+        # get shortened item name
+        var item_name    
         if (item.itemType.body.length < 17) {
             eval item_name = item.itemType.body
         } else {
             eval item_name = item.itemType.body.substring(0, 16)
         }
-        scoreboard players set $item_name goal_list 1
+        
+        var store_path_string = "Inventory[{id:\"" + item.itemType + "\"}]"
+        
+        # set minimum count for items crafted
+        /${"execute store result score count " + item_name + " run execute if data storage c:search_goals_raw " + store_path_string}
+        
+        # set goal_list from goals storage
+        /${"execute if data storage c:search_goals_raw " + store_path_string + " run scoreboard players operation " + item_name + " goal_list = count " + item_name}
+       
+        # create crating criteria from the goal_list
         var criteria = "minecraft.crafted:" + item.itemType
         eval criteria = criteria.replace("minecraft:", "minecraft.")
-        scoreboard objectives add $item_name $criteria
+        /${"execute if data storage c:search_goals_raw " + store_path_string + " run scoreboard objectives add " + item_name + " " + criteria}
     }
 }
 
@@ -101,12 +154,16 @@ define function inv_save {
     eval inv.save()
     fill 9 14 22 7 12 22 air
     function c:search/place_sign_inv_edit
+    function c:search/place_sign_goals_edit
+    set isInvEditing->global = 0
 }
 
 define function inv_cancel {
     eval inv.cancel()
     fill 9 14 22 7 12 22 air
     function c:search/place_sign_inv_edit
+    function c:search/place_sign_goals_edit    
+    set isInvEditing->global = 0
 }
 
 define function reset {
@@ -114,6 +171,7 @@ define function reset {
     gamemode $default_gamemode
     function c:search/inv_cancel
     eval timer.srigt_zero()
+    set searching->global = 0
     
     for (item in item_list) {
         var item_name
@@ -122,8 +180,7 @@ define function reset {
         } else {
             eval item_name = item.itemType.body.substring(0, 16)
         }
-        scoreboard players set $item_name goal_list 0
-        as @a scoreboard players set @s $item_name 0
+        scoreboard players set @s $item_name 0
     }
 }
 
@@ -132,14 +189,41 @@ define function inv_edit {
     eval timer.srigt_zero()
     eval inv.edit()
     fill 9 14 22 7 12 22 air
-    function c:search/place_sign_inv_save
-    function c:search/place_sign_inv_cancel
+    set isInvEditing->global = 1
 }
+
+define function goals_edit {
+    function c:search/reset
+    eval timer.srigt_zero()
+    eval goals.edit()
+    fill 9 14 22 7 12 22 air
+    set isGoalsEditing->global = 1
+}
+
+define function goals_save {
+    data modify storage c:search_goals_raw Inventory set from entity @s Inventory
+    eval goals.save()
+    function c:search/setup_objectives
+    fill 9 14 22 7 12 22 air
+    function c:search/place_sign_inv_edit
+    function c:search/place_sign_goals_edit
+    set isGoalsEditing->global = 0
+}
+
+define function goals_cancel {
+    eval goals.cancel()
+    fill 9 14 22 7 12 22 air
+    function c:search/place_sign_inv_edit
+    function c:search/place_sign_goals_edit
+    set isGoalsEditing->global = 0
+}
+
 
 define function start {
     function c:search/reset
     eval inv.load()
     eval timer.srigt_start()
+    set searching->global = 1
     
     scoreboard objectives setdisplay sidebar goal_list
 }
@@ -151,6 +235,7 @@ define function exit {
 
 define function finish {
     eval timer.srigt_stop()
+    set searching->global = 0
 }
 
 define function search {
@@ -164,6 +249,7 @@ define function load {
     function c:search/place_sign_start
     function c:search/place_sign_exit
     function c:search/place_sign_inv_edit
+    function c:search/place_sign_goals_edit
     function c:search/setup_objectives
 }
 
@@ -173,7 +259,9 @@ define function tick {
     define function con_tick {
         if score isInvEditing global matches 1 function c:search/place_sign_inv_save
         if score isInvEditing global matches 1 function c:search/place_sign_inv_cancel
-        kill @e[type=item]
+        if score isGoalsEditing global matches 1 function c:search/place_sign_goals_save
+        if score isGoalsEditing global matches 1 function c:search/place_sign_goals_cancel
+        if score searching global matches 1 kill @e[type=item]
         set searchFinished->global = 1
         for (item in item_list) {
             var item_name = item.itemType.body
@@ -182,9 +270,11 @@ define function tick {
             } else {
                 eval item_name = item.itemType.body.substring(0, 16)
             }
-            as @a if score @s $item_name matches 1.. scoreboard players reset $item_name goal_list
-            as @a unless score @s $item_name matches 1.. set searchFinished->global = 0
-            clear @a $item
+            if score searching global matches 1 scoreboard players operation $item_name goal_list = count $item_name
+            as @a if score searching global matches 1 scoreboard players operation $item_name goal_list -= @s $item_name
+            if score $item_name goal_list matches 0 scoreboard players reset $item_name goal_list
+            if score $item_name goal_list matches 1.. set searchFinished->global = 0
+            if score searching global matches 1 clear @a $item
         }
         if score searchFinished global matches 1 function c:search/finish
     }
