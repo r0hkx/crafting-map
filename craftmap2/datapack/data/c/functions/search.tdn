@@ -2,26 +2,13 @@
 @ require c:saved_inventory
 @ require c:timer
 
-global var item_list = [
-    item<ender_eye>,
-    item<white_bed>,
-    item<respawn_anchor>,
-    item<iron_bars>,
-    item<coarse_dirt>,
-    item<iron_axe>,
-    item<shield>,
-    item<bread>,
-    item<golden_apple>,
-    item<bow>,
-    item<bucket>,
-    item<oak_boat>,
-    item<golden_carrot>,
-    item<golden_pickaxe>,
-    item<golden_helmet>,
-    item<flint_and_steel>,
-    item<nether_bricks>,
-    item<tnt>
-]
+global var item_list = []
+    
+for (item in MinecraftTypes.getDefinitionsForCategory("item")) {
+    var buh = new item((resource)item.key)
+    eval item_list.add(buh)
+}
+    
 
 var inv = new saved_inventory(
     "search",
@@ -113,7 +100,7 @@ define function place_sign_goals_cancel {
     setblock 9 12 22 air
     setblock 9 12 22 minecraft:oak_wall_sign[facing=north]{
         Text1:'{"text":"","clickEvent":{"action":"run_command","value":"function c:search/goals_cancel"}}',
-        Text2:'{"text":"Cancel", "bold":"true", "color":"red"}',
+    Text2:'{"text":"Cancel", "bold":"true", "color":"red"}',
         Text3:'{"text":""}',
         Text4:'{"text":""}'
     }
@@ -121,25 +108,22 @@ define function place_sign_goals_cancel {
 
 define function setup_objectives {
     
-    # create goal_list objective
     scoreboard objectives add goal_list dummy "Items Left"
     
-    # loop over all items
     for (item in item_list) {
         
-        # get shortened item name
         var item_name    
         if (item.itemType.body.length < 17) {
             eval item_name = item.itemType.body
         } else {
             eval item_name = item.itemType.body.substring(0, 16)
         }
-        
         var store_path_string = "Inventory[{id:\"" + item.itemType + "\"}]"
         
         # create crating criteria from the goal_list
         var criteria = "minecraft.crafted:" + item.itemType
         eval criteria = criteria.replace("minecraft:", "minecraft.")
+        scoreboard objectives remove $item_name
         /${"execute if data storage c:search_goals_raw " + store_path_string + " run scoreboard objectives add " + item_name + " " + criteria}
         
         # set minimum count for items crafted
@@ -167,40 +151,6 @@ define function inv_cancel {
     set isInvEditing->global = 0
 }
 
-define function reset {
-    scoreboard objectives setdisplay sidebar
-    gamemode $default_gamemode
-    function c:search/inv_cancel
-    eval timer.srigt_zero()
-    set searching->global = 0
-    
-    for (item in item_list) {
-        var item_name
-        if (item.itemType.body.length < 17) {
-            eval item_name = item.itemType.body
-        } else {
-            eval item_name = item.itemType.body.substring(0, 16)
-        }
-        scoreboard players set @s $item_name 0
-    }
-}
-
-define function inv_edit {
-    function c:search/reset
-    eval timer.srigt_zero()
-    eval inv.edit()
-    fill 9 14 22 7 12 22 air
-    set isInvEditing->global = 1
-}
-
-define function goals_edit {
-    function c:search/reset
-    eval timer.srigt_zero()
-    eval goals.edit()
-    fill 9 14 22 7 12 22 air
-    set isGoalsEditing->global = 1
-}
-
 define function goals_save {
     data modify storage c:search_goals_raw Inventory set from entity @s Inventory
     eval goals.save()
@@ -219,6 +169,41 @@ define function goals_cancel {
     set isGoalsEditing->global = 0
 }
 
+define function reset {
+    scoreboard objectives setdisplay sidebar
+    gamemode $default_gamemode
+    function c:search/inv_cancel
+    function c:search/goals_cancel
+    eval timer.srigt_zero()
+    set searching->global = 0
+    
+    for (item in item_list) {
+        var item_name
+        if (item.itemType.body.length < 17) {
+            eval item_name = item.itemType.body
+        } else {
+            eval item_name = item.itemType.body.substring(0, 16)
+        }
+        unless score @s $item_name matches 0 scoreboard players set @s $item_name 0
+        scoreboard players reset $item_name goal_list
+    }
+}
+
+define function goals_edit {
+    function c:search/reset
+    eval timer.srigt_zero()
+    eval goals.edit()
+    fill 9 14 22 7 12 22 air
+    set isGoalsEditing->global = 1
+}
+
+define function inv_edit {
+    function c:search/reset
+    eval timer.srigt_zero()
+    eval inv.edit()
+    fill 9 14 22 7 12 22 air
+    set isInvEditing->global = 1
+}
 
 define function start {
     function c:search/reset
@@ -237,6 +222,7 @@ define function exit {
 define function finish {
     eval timer.srigt_stop()
     set searching->global = 0
+    as @a playsound minecraft:block.note_block.bell master @s ~ ~ ~ 1 2
 }
 
 define function search {
@@ -252,6 +238,7 @@ define function load {
     function c:search/place_sign_inv_edit
     function c:search/place_sign_goals_edit
     function c:search/setup_objectives
+
 }
 
 define function tick {
@@ -276,13 +263,13 @@ define function tick {
                 eval item_name = item.itemType.body.substring(0, 16)
             }
             
-            if score searching global matches 1 scoreboard players operation $item_name goal_list = count $item_name
-            as @a if score searching global matches 1 scoreboard players operation $item_name goal_list -= @s $item_name
+            as @a if score searching global matches 1 if score count $item_name matches 1.. scoreboard players operation $item_name goal_list = count $item_name
+            as @a if score searching global matches 1 if score count $item_name matches 1.. scoreboard players operation $item_name goal_list -= @s $item_name
             
-            if score $item_name goal_list matches ..0 scoreboard players reset $item_name goal_list
-            if score $item_name goal_list matches 1.. set searchFinished->global = 0
+            as @a if score searching global matches 1 if score $item_name goal_list matches ..0 scoreboard players reset $item_name goal_list
+            as @a if score searching global matches 1 if score $item_name goal_list matches 1.. set searchFinished->global = 0
             
-            if score searching global matches 1 clear @a $item
+            as @a if score searching global matches 1 if score count $item_name matches 0.. if score searching global matches 1 clear @a $item
         }
         if score searchFinished global matches 1 function c:search/finish
     }
