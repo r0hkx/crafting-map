@@ -20,7 +20,7 @@ define function one_time_setup {
     say one time setup
 }
 
-as @a unless score hasPlayed global matches 1 function /one_time_setup
+as @a unless score hasPlayed global matches 1 schedule function /one_time_setup 2t
 
 
 

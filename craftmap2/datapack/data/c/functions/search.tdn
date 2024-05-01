@@ -25,16 +25,16 @@ global var item_list = [
 
 var inv = new saved_inventory(
     "search",
-    coordinates<-8 5 10>,
-    coordinates<-8 5 9>,
-    coordinates<-8 5 8>
+    coordinates<1 0 0>,
+    coordinates<1 0 1>,
+    coordinates<1 0 2>
 )
 
 var goals = new saved_inventory(
     "search_goals",
-    coordinates<-9 5 10>,
-    coordinates<-9 5 9>,
-    coordinates<-9 5 8>
+    coordinates<2 0 0>,
+    coordinates<2 0 1>,
+    coordinates<2 0 2>
 )
 
 var timer = new timer()
@@ -137,16 +137,17 @@ define function setup_objectives {
         
         var store_path_string = "Inventory[{id:\"" + item.itemType + "\"}]"
         
-        # set minimum count for items crafted
-        /${"execute store result score count " + item_name + " run execute if data storage c:search_goals_raw " + store_path_string}
-        
-        # set goal_list from goals storage
-        /${"execute if data storage c:search_goals_raw " + store_path_string + " run scoreboard players operation " + item_name + " goal_list = count " + item_name}
-       
         # create crating criteria from the goal_list
         var criteria = "minecraft.crafted:" + item.itemType
         eval criteria = criteria.replace("minecraft:", "minecraft.")
         /${"execute if data storage c:search_goals_raw " + store_path_string + " run scoreboard objectives add " + item_name + " " + criteria}
+        
+        # set minimum count for items crafted
+        /${"execute store result score count " + item_name + " run execute if data storage c:search_goals_raw " + store_path_string}
+        /${"execute if score count " + item_name + " matches 1 store result score count " + item_name + " run data get storage c:search_goals_raw " + store_path_string + ".Count"}
+        
+        # set goal_list from goals storage
+        /${"execute if data storage c:search_goals_raw " + store_path_string + " run scoreboard players operation " + item_name + " goal_list = count " + item_name}
     }
 }
 
@@ -259,10 +260,14 @@ define function tick {
     define function con_tick {
         if score isInvEditing global matches 1 function c:search/place_sign_inv_save
         if score isInvEditing global matches 1 function c:search/place_sign_inv_cancel
+        
         if score isGoalsEditing global matches 1 function c:search/place_sign_goals_save
         if score isGoalsEditing global matches 1 function c:search/place_sign_goals_cancel
+        
         if score searching global matches 1 kill @e[type=item]
+        
         set searchFinished->global = 1
+        
         for (item in item_list) {
             var item_name = item.itemType.body
             if (item.itemType.body.length < 17) {
@@ -270,16 +275,18 @@ define function tick {
             } else {
                 eval item_name = item.itemType.body.substring(0, 16)
             }
+            
             if score searching global matches 1 scoreboard players operation $item_name goal_list = count $item_name
             as @a if score searching global matches 1 scoreboard players operation $item_name goal_list -= @s $item_name
-            if score $item_name goal_list matches 0 scoreboard players reset $item_name goal_list
+            
+            if score $item_name goal_list matches ..0 scoreboard players reset $item_name goal_list
             if score $item_name goal_list matches 1.. set searchFinished->global = 0
+            
             if score searching global matches 1 clear @a $item
         }
         if score searchFinished global matches 1 function c:search/finish
     }
     
     if score search global matches 1 function /con_tick
-
     
 }
