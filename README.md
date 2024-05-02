@@ -1,9 +1,11 @@
-# crafting-map
-minecraft crafting practice map
+# r0hkx's Crafting Pracitce Map
 
-features:
-* search crafting practice
-  * customizable inventory
-  * original map by 7rowl
+Features:
+* Search crafting practice
+  * Fully customizable inventory
+  * Fully customizable goal crafts
+  * SRIGT support
+
+For any questions, suggestions, or bug reports, please contact me @r0hkx on discord.
 
 created with [Trident](https://energyxxer.com/trident/)
