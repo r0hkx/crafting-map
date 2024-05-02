@@ -139,7 +139,7 @@ data modify storage c:search_goals Inventory append value {Slot:4b,id:"minecraft
 data modify storage c:search_goals Inventory append value {Slot:5b,id:"minecraft:golden_apple",Count:1b}
 data modify storage c:search_goals Inventory append value {Slot:6b,id:"minecraft:golden_helmet",Count:1b}
 data modify storage c:search_goals Inventory append value {Slot:7b,id:"minecraft:golden_pickaxe",Count:1b}
-data modify storage c:search_goals Inventory append value {Slot:8b,id:"minecraft:golden_carrot",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:8b,id:"minecraft:golden_carrot",Count:5b}
 data modify storage c:search_goals Inventory append value {Slot:9b,id:"minecraft:shield",Count:1b}
 data modify storage c:search_goals Inventory append value {Slot:10b,id:"minecraft:oak_boat",Count:1b}
 data modify storage c:search_goals Inventory append value {Slot:11b,id:"minecraft:iron_bars",Count:16b}
@@ -151,7 +151,7 @@ data modify storage c:search_goals Inventory append value {Slot:16b,id:"minecraf
 data modify storage c:search_goals Inventory append value {Slot:17b,id:"minecraft:flint_and_steel",Count:1b}
 data modify storage c:search_goals Inventory append value {Slot:18b,id:"minecraft:ender_eye",Count:8b}
 data modify storage c:search_goals Inventory append value {Slot:19b,id:"minecraft:coarse_dirt",Count:64b}
-data modify storage c:search_goals Inventory append value {Slot:20b,id:"minecraft:nether_bricks",Count:5b}
+data modify storage c:search_goals Inventory append value {Slot:20b,id:"minecraft:nether_bricks",Count:16b}
 data modify storage c:search_goals_raw Inventory set from storage c:search_goals Inventory
 function c:search/setup_objectives
 execute unless block 2 0 0 minecraft:yellow_shulker_box run setblock 2 0 0 minecraft:yellow_shulker_box
@@ -262,4 +262,3 @@ data remove storage c:search_goals Inventory[{Slot:34b}]
 data modify storage c:search_goals Inventory[{Slot:35b}] merge value {Slot:26b}
 execute as @a run data modify block 2 0 2 Items append from storage c:search_goals Inventory[{Slot:26b}]
 data remove storage c:search_goals Inventory[{Slot:35b}]
-say buh afosduhif

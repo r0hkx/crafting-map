@@ -186,6 +186,8 @@ define function reset {
         }
         unless score @s $item_name matches 0 scoreboard players set @s $item_name 0
         scoreboard players reset $item_name goal_list
+        if score count $item_name matches 1.. scoreboard players operation $item_name goal_list = count $item_name
+        if score count $item_name matches 1.. scoreboard players operation clearCount $item_name = count $item_name
     }
 }
 
@@ -231,6 +233,23 @@ define function search {
     set lobby->global = 0
     set search->global = 1
 }
+
+define function clear_items {
+    for (item in item_list) {
+        var item_name = item.itemType.body
+        if (item.itemType.body.length < 17) {
+            eval item_name = item.itemType.body
+        } else {
+            eval item_name = item.itemType.body.substring(0, 16)
+        }
+        
+        as @a if score searching global matches 1 if score @s $item_name matches 1.. if score clearCount $item_name matches 1.. clear @a $item 1
+        as @a if score searching global matches 1 if score @s $item_name matches 1.. if score clearCount $item_name matches 1.. scoreboard players remove clearCount $item_name 1
+        as @a if score searching global matches 1 if score @s $item_name matches 1.. if score clearCount $item_name matches 1.. function c:search/clear_items
+    }
+
+}
+
 
 define function load {
     @ tag load
@@ -279,7 +298,7 @@ define function one_time_setup {
     eval goals.add(new nbt({Slot: nbt_value<5b>, id: "minecraft:golden_apple", Count: nbt_value<1b>}))
     eval goals.add(new nbt({Slot: nbt_value<6b>, id: "minecraft:golden_helmet", Count: nbt_value<1b>}))
     eval goals.add(new nbt({Slot: nbt_value<7b>, id: "minecraft:golden_pickaxe", Count: nbt_value<1b>}))
-    eval goals.add(new nbt({Slot: nbt_value<8b>, id: "minecraft:golden_carrot", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<8b>, id: "minecraft:golden_carrot", Count: nbt_value<5b>}))
     eval goals.add(new nbt({Slot: nbt_value<9b>, id: "minecraft:shield", Count: nbt_value<1b>}))
     eval goals.add(new nbt({Slot: nbt_value<10b>, id: "minecraft:oak_boat", Count: nbt_value<1b>}))
     eval goals.add(new nbt({Slot: nbt_value<11b>, id: "minecraft:iron_bars", Count: nbt_value<16b>}))
@@ -291,13 +310,10 @@ define function one_time_setup {
     eval goals.add(new nbt({Slot: nbt_value<17b>, id: "minecraft:flint_and_steel", Count: nbt_value<1b>}))
     eval goals.add(new nbt({Slot: nbt_value<18b>, id: "minecraft:ender_eye", Count: nbt_value<8b>}))
     eval goals.add(new nbt({Slot: nbt_value<19b>, id: "minecraft:coarse_dirt", Count: nbt_value<64b>}))
-    eval goals.add(new nbt({Slot: nbt_value<20b>, id: "minecraft:nether_bricks", Count: nbt_value<5b>}))
+    eval goals.add(new nbt({Slot: nbt_value<20b>, id: "minecraft:nether_bricks", Count: nbt_value<16b>}))
     data modify storage c:search_goals_raw Inventory set from storage c:search_goals Inventory
     function c:search/setup_objectives
     eval goals.storage_to_box()
-    
-    say buh afosduhif
-    
 }
 
 define function tick {
@@ -322,14 +338,19 @@ define function tick {
                 eval item_name = item.itemType.body.substring(0, 16)
             }
             
-            as @a if score searching global matches 1 if score count $item_name matches 1.. scoreboard players operation $item_name goal_list = count $item_name
             as @a if score searching global matches 1 if score count $item_name matches 1.. scoreboard players operation $item_name goal_list -= @s $item_name
             
             as @a if score searching global matches 1 if score $item_name goal_list matches ..0 scoreboard players reset $item_name goal_list
             as @a if score searching global matches 1 if score $item_name goal_list matches 1.. set searchFinished->global = 0
             
-            as @a if score searching global matches 1 if score count $item_name matches 0.. if score searching global matches 1 clear @a $item
+#            new, more working clear
+#            as @a if score searching global matches 1 if score @s $item_name matches 1.. if score clearCount $item_name matches 1.. clear @a $item 1
+#            as @a if score searching global matches 1 if score @s $item_name matches 1.. if score clearCount $item_name matches 1.. scoreboard players remove clearCount $item_name 1
+            
+#           old, mostly working clear
+#            as @a if score searching global matches 1 if score count $item_name matches 1.. clear @a $item
         }
+        function c:search/clear_items
         if score searchFinished global matches 1 function c:search/finish
     }
     

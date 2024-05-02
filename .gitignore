@@ -5,5 +5,7 @@
 /poi/
 /speedrunigt/
 /stats/
+/data/
 session.lock
 level.dat_old
+standardoptions.txt

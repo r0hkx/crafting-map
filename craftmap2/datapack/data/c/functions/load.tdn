@@ -13,12 +13,16 @@ define function one_time_setup {
     set search->global = 0
     
     set hasPlayed->global = 1
-    say one time setup
+    advancement grant @s everything
+    
+    say initialized
 }
 
 define function tick {
     @ tag tick
     if entity @a unless score hasPlayed global matches 1 function c:load/one_time_setup
+    as @a xp set @s 3 levels
+    as @a xp set @s 0 points
 }
 
 

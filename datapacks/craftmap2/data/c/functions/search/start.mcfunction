@@ -1,9 +1,9 @@
 function c:search/reset
-playsound minecraft:entity.item.pickup master @a ~ ~ ~ 0.20000000298023224 1.9736990928649902
-playsound minecraft:entity.item.pickup master @a ~ ~ ~ 0.20000000298023224 1.837498426437378
-playsound minecraft:entity.item.pickup master @a ~ ~ ~ 0.20000000298023224 1.955063819885254
-playsound minecraft:entity.item.pickup master @a ~ ~ ~ 0.20000000298023224 1.8416602611541748
-playsound minecraft:entity.item.pickup master @a ~ ~ ~ 0.20000000298023224 1.8329415321350098
+playsound minecraft:entity.item.pickup master @a ~ ~ ~ 0.20000000298023224 1.9149163961410522
+playsound minecraft:entity.item.pickup master @a ~ ~ ~ 0.20000000298023224 1.9362491369247437
+playsound minecraft:entity.item.pickup master @a ~ ~ ~ 0.20000000298023224 1.9894075393676758
+playsound minecraft:entity.item.pickup master @a ~ ~ ~ 0.20000000298023224 1.9015785455703735
+playsound minecraft:entity.item.pickup master @a ~ ~ ~ 0.20000000298023224 1.828993558883667
 execute as @a run clear @s
 loot replace entity @a container.0 mine 1 0 0 minecraft:air{drop_contents:1b}
 loot replace entity @a weapon.offhand mine 1 0 1 minecraft:air{drop_contents:1b}
