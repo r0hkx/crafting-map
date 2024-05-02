@@ -263,12 +263,12 @@ define function one_time_setup {
     eval inv.add(new nbt({Slot: nbt_value<10b>, id: "minecraft:gold_ingot", Count: nbt_value<18b>}))
     eval inv.add(new nbt({Slot: nbt_value<11b>, id: "minecraft:carrot", Count: nbt_value<5b>}))
     eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:flint", Count: nbt_value<1b>}))
-    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:crying_obsidian", Count: nbt_value<30b>}))
-    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:iron_ingot", Count: nbt_value<4b>}))
-    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:stick", Count: nbt_value<7b>}))
-    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:ender_pearl", Count: nbt_value<8b>}))
-    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:nether_brick", Count: nbt_value<64b>}))
-    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:gold_nugget", Count: nbt_value<22b>}))
+    eval inv.add(new nbt({Slot: nbt_value<13b>, id: "minecraft:crying_obsidian", Count: nbt_value<30b>}))
+    eval inv.add(new nbt({Slot: nbt_value<14b>, id: "minecraft:iron_ingot", Count: nbt_value<4b>}))
+    eval inv.add(new nbt({Slot: nbt_value<15b>, id: "minecraft:stick", Count: nbt_value<7b>}))
+    eval inv.add(new nbt({Slot: nbt_value<16b>, id: "minecraft:ender_pearl", Count: nbt_value<8b>}))
+    eval inv.add(new nbt({Slot: nbt_value<17b>, id: "minecraft:nether_brick", Count: nbt_value<64b>}))
+    eval inv.add(new nbt({Slot: nbt_value<18b>, id: "minecraft:gold_nugget", Count: nbt_value<22b>}))
     eval inv.storage_to_box()
     
     eval goals.add(new nbt({Slot: nbt_value<0b>, id: "minecraft:respawn_anchor", Count: nbt_value<5b>}))
@@ -292,7 +292,9 @@ define function one_time_setup {
     eval goals.add(new nbt({Slot: nbt_value<18b>, id: "minecraft:ender_eye", Count: nbt_value<8b>}))
     eval goals.add(new nbt({Slot: nbt_value<19b>, id: "minecraft:coarse_dirt", Count: nbt_value<64b>}))
     eval goals.add(new nbt({Slot: nbt_value<20b>, id: "minecraft:nether_bricks", Count: nbt_value<5b>}))
-    function c:search/goals_save
+    data modify storage c:search_goals_raw Inventory set from storage c:search_goals Inventory
+    function c:search/setup_objectives
+    eval goals.storage_to_box()
     
     say buh afosduhif
     
