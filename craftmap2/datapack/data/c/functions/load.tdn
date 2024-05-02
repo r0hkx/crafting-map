@@ -6,12 +6,8 @@ define objective global
 global var default_gamemode = "adventure"
 
 define function one_time_setup {
-    advancement grant @s only minecraft:recipes/transportation/oak_boat
-    advancement grant @s only minecraft:recipes/transportation/spruce_boat
-    advancement grant @s only minecraft:recipes/transportation/birch_boat
-    advancement grant @s only minecraft:recipes/transportation/jungle_boat
-    advancement grant @s only minecraft:recipes/transportation/acacia_boat
-    advancement grant @s only minecraft:recipes/transportation/dark_oak_boat
+    
+    /function c:search/one_time_setup
     
     set lobby->global = 1
     set search->global = 0
@@ -20,7 +16,11 @@ define function one_time_setup {
     say one time setup
 }
 
-as @a unless score hasPlayed global matches 1 schedule function /one_time_setup 2t
+define function tick {
+    @ tag tick
+    if entity @a unless score hasPlayed global matches 1 function c:load/one_time_setup
+}
+
 
 
 

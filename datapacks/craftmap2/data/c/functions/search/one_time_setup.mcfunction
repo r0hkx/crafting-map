@@ -1,10 +1,28 @@
-execute unless block 1 0 0 minecraft:yellow_shulker_box run setblock 1 0 0 minecraft:yellow_shulker_box
-execute unless block 1 0 1 minecraft:yellow_shulker_box run setblock 1 0 1 minecraft:yellow_shulker_box
-execute unless block 1 0 2 minecraft:yellow_shulker_box run setblock 1 0 2 minecraft:yellow_shulker_box
-data remove block 1 0 0 Items
-data remove block 1 0 1 Items
-data remove block 1 0 2 Items
-execute as @a run data modify storage c:search Inventory set from entity @s Inventory
+execute as @a run advancement grant @s only minecraft:recipes/transportation/oak_boat
+execute as @a run advancement grant @s only minecraft:recipes/transportation/spruce_boat
+execute as @a run advancement grant @s only minecraft:recipes/transportation/birch_boat
+execute as @a run advancement grant @s only minecraft:recipes/transportation/jungle_boat
+execute as @a run advancement grant @s only minecraft:recipes/transportation/acacia_boat
+execute as @a run advancement grant @s only minecraft:recipes/transportation/dark_oak_boat
+data modify storage c:search Inventory append value {Slot:0b,id:"minecraft:blaze_rod",Count:4b}
+data modify storage c:search Inventory append value {Slot:1b,id:"minecraft:string",Count:64b}
+data modify storage c:search Inventory append value {Slot:2b,id:"minecraft:glowstone_dust",Count:60b}
+data modify storage c:search Inventory append value {Slot:3b,id:"minecraft:dirt",Count:32b}
+data modify storage c:search Inventory append value {Slot:4b,id:"minecraft:gravel",Count:32b}
+data modify storage c:search Inventory append value {Slot:5b,id:"minecraft:oak_planks",Count:26b}
+data modify storage c:search Inventory append value {Slot:6b,id:"minecraft:iron_nugget",Count:64b}
+data modify storage c:search Inventory append value {Slot:7b,id:"minecraft:iron_nugget",Count:26b}
+data modify storage c:search Inventory append value {Slot:8b,id:"minecraft:wheat",Count:12b}
+data modify storage c:search Inventory append value {Slot:9b,id:"minecraft:apple",Count:1b}
+data modify storage c:search Inventory append value {Slot:10b,id:"minecraft:gold_ingot",Count:18b}
+data modify storage c:search Inventory append value {Slot:11b,id:"minecraft:carrot",Count:5b}
+data modify storage c:search Inventory append value {Slot:12b,id:"minecraft:flint",Count:1b}
+data modify storage c:search Inventory append value {Slot:12b,id:"minecraft:crying_obsidian",Count:30b}
+data modify storage c:search Inventory append value {Slot:12b,id:"minecraft:iron_ingot",Count:4b}
+data modify storage c:search Inventory append value {Slot:12b,id:"minecraft:stick",Count:7b}
+data modify storage c:search Inventory append value {Slot:12b,id:"minecraft:ender_pearl",Count:8b}
+data modify storage c:search Inventory append value {Slot:12b,id:"minecraft:nether_brick",Count:64b}
+data modify storage c:search Inventory append value {Slot:12b,id:"minecraft:gold_nugget",Count:22b}
 execute unless block 1 0 0 minecraft:yellow_shulker_box run setblock 1 0 0 minecraft:yellow_shulker_box
 execute unless block 1 0 1 minecraft:yellow_shulker_box run setblock 1 0 1 minecraft:yellow_shulker_box
 execute unless block 1 0 2 minecraft:yellow_shulker_box run setblock 1 0 2 minecraft:yellow_shulker_box
@@ -113,9 +131,26 @@ data remove storage c:search Inventory[{Slot:34b}]
 data modify storage c:search Inventory[{Slot:35b}] merge value {Slot:26b}
 execute as @a run data modify block 1 0 2 Items append from storage c:search Inventory[{Slot:26b}]
 data remove storage c:search Inventory[{Slot:35b}]
-execute as @a run clear @s
-execute as @a run gamemode adventure
-fill 9 14 22 7 12 22 minecraft:air
-function c:search/place_sign_inv_edit
-function c:search/place_sign_goals_edit
-scoreboard players set isInvEditing global 0
+data modify storage c:search_goals Inventory append value {Slot:0b,id:"minecraft:respawn_anchor",Count:5b}
+data modify storage c:search_goals Inventory append value {Slot:1b,id:"minecraft:bucket",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:2b,id:"minecraft:bread",Count:4b}
+data modify storage c:search_goals Inventory append value {Slot:3b,id:"minecraft:iron_axe",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:4b,id:"minecraft:bow",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:5b,id:"minecraft:golden_apple",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:6b,id:"minecraft:golden_helmet",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:7b,id:"minecraft:golden_pickaxe",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:8b,id:"minecraft:golden_carrot",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:9b,id:"minecraft:shield",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:10b,id:"minecraft:oak_boat",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:11b,id:"minecraft:iron_bars",Count:16b}
+data modify storage c:search_goals Inventory append value {Slot:12b,id:"minecraft:white_bed",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:13b,id:"minecraft:white_bed",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:14b,id:"minecraft:white_bed",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:15b,id:"minecraft:white_bed",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:16b,id:"minecraft:white_bed",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:17b,id:"minecraft:flint_and_steel",Count:1b}
+data modify storage c:search_goals Inventory append value {Slot:18b,id:"minecraft:ender_eye",Count:8b}
+data modify storage c:search_goals Inventory append value {Slot:19b,id:"minecraft:coarse_dirt",Count:64b}
+data modify storage c:search_goals Inventory append value {Slot:20b,id:"minecraft:nether_bricks",Count:5b}
+function c:search/goals_save
+say buh afosduhif

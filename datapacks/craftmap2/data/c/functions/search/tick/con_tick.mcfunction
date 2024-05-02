@@ -3,7 +3,7 @@ execute if score isInvEditing global matches 1 run function c:search/place_sign_
 execute if score isGoalsEditing global matches 1 run function c:search/place_sign_goals_save
 execute if score isGoalsEditing global matches 1 run function c:search/place_sign_goals_cancel
 execute if score searching global matches 1 run kill @e[type=minecraft:item]
-scoreboard players set searchFinished global 1
+execute if score searching global matches 1 run scoreboard players set searchFinished global 1
 execute as @a if score searching global matches 1 if score count cod_bucket matches 1.. run scoreboard players operation cod_bucket goal_list = count cod_bucket
 execute as @a if score searching global matches 1 if score count cod_bucket matches 1.. run scoreboard players operation cod_bucket goal_list -= @s cod_bucket
 execute as @a if score searching global matches 1 if score cod_bucket goal_list matches ..0 run scoreboard players reset cod_bucket goal_list

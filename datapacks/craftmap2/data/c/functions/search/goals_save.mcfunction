@@ -6,6 +6,12 @@ data remove block 2 0 0 Items
 data remove block 2 0 1 Items
 data remove block 2 0 2 Items
 execute as @a run data modify storage c:search_goals Inventory set from entity @s Inventory
+execute unless block 2 0 0 minecraft:yellow_shulker_box run setblock 2 0 0 minecraft:yellow_shulker_box
+execute unless block 2 0 1 minecraft:yellow_shulker_box run setblock 2 0 1 minecraft:yellow_shulker_box
+execute unless block 2 0 2 minecraft:yellow_shulker_box run setblock 2 0 2 minecraft:yellow_shulker_box
+data remove block 2 0 0 Items
+data remove block 2 0 1 Items
+data remove block 2 0 2 Items
 execute as @a run data modify block 2 0 0 Items append from storage c:search_goals Inventory[{Slot:0b}]
 data remove storage c:search_goals Inventory[{Slot:0b}]
 execute as @a run data modify block 2 0 0 Items append from storage c:search_goals Inventory[{Slot:1b}]

@@ -222,6 +222,7 @@ define function exit {
 define function finish {
     eval timer.srigt_stop()
     set searching->global = 0
+    set searchFinished->global = 0
     as @a playsound minecraft:block.note_block.bell master @s ~ ~ ~ 1 2
 }
 
@@ -241,6 +242,62 @@ define function load {
 
 }
 
+define function one_time_setup {
+    as @a advancement grant @s only minecraft:recipes/transportation/oak_boat
+    as @a advancement grant @s only minecraft:recipes/transportation/spruce_boat
+    as @a advancement grant @s only minecraft:recipes/transportation/birch_boat
+    as @a advancement grant @s only minecraft:recipes/transportation/jungle_boat
+    as @a advancement grant @s only minecraft:recipes/transportation/acacia_boat
+    as @a advancement grant @s only minecraft:recipes/transportation/dark_oak_boat
+    
+    eval inv.add(new nbt({Slot: nbt_value<0b>, id: "minecraft:blaze_rod", Count: nbt_value<4b>}))
+    eval inv.add(new nbt({Slot: nbt_value<1b>, id: "minecraft:string", Count: nbt_value<64b>}))
+    eval inv.add(new nbt({Slot: nbt_value<2b>, id: "minecraft:glowstone_dust", Count: nbt_value<60b>}))
+    eval inv.add(new nbt({Slot: nbt_value<3b>, id: "minecraft:dirt", Count: nbt_value<32b>}))
+    eval inv.add(new nbt({Slot: nbt_value<4b>, id: "minecraft:gravel", Count: nbt_value<32b>}))
+    eval inv.add(new nbt({Slot: nbt_value<5b>, id: "minecraft:oak_planks", Count: nbt_value<26b>}))
+    eval inv.add(new nbt({Slot: nbt_value<6b>, id: "minecraft:iron_nugget", Count: nbt_value<64b>}))
+    eval inv.add(new nbt({Slot: nbt_value<7b>, id: "minecraft:iron_nugget", Count: nbt_value<26b>}))
+    eval inv.add(new nbt({Slot: nbt_value<8b>, id: "minecraft:wheat", Count: nbt_value<12b>}))
+    eval inv.add(new nbt({Slot: nbt_value<9b>, id: "minecraft:apple", Count: nbt_value<1b>}))
+    eval inv.add(new nbt({Slot: nbt_value<10b>, id: "minecraft:gold_ingot", Count: nbt_value<18b>}))
+    eval inv.add(new nbt({Slot: nbt_value<11b>, id: "minecraft:carrot", Count: nbt_value<5b>}))
+    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:flint", Count: nbt_value<1b>}))
+    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:crying_obsidian", Count: nbt_value<30b>}))
+    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:iron_ingot", Count: nbt_value<4b>}))
+    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:stick", Count: nbt_value<7b>}))
+    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:ender_pearl", Count: nbt_value<8b>}))
+    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:nether_brick", Count: nbt_value<64b>}))
+    eval inv.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:gold_nugget", Count: nbt_value<22b>}))
+    eval inv.storage_to_box()
+    
+    eval goals.add(new nbt({Slot: nbt_value<0b>, id: "minecraft:respawn_anchor", Count: nbt_value<5b>}))
+    eval goals.add(new nbt({Slot: nbt_value<1b>, id: "minecraft:bucket", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<2b>, id: "minecraft:bread", Count: nbt_value<4b>}))
+    eval goals.add(new nbt({Slot: nbt_value<3b>, id: "minecraft:iron_axe", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<4b>, id: "minecraft:bow", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<5b>, id: "minecraft:golden_apple", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<6b>, id: "minecraft:golden_helmet", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<7b>, id: "minecraft:golden_pickaxe", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<8b>, id: "minecraft:golden_carrot", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<9b>, id: "minecraft:shield", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<10b>, id: "minecraft:oak_boat", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<11b>, id: "minecraft:iron_bars", Count: nbt_value<16b>}))
+    eval goals.add(new nbt({Slot: nbt_value<12b>, id: "minecraft:white_bed", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<13b>, id: "minecraft:white_bed", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<14b>, id: "minecraft:white_bed", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<15b>, id: "minecraft:white_bed", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<16b>, id: "minecraft:white_bed", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<17b>, id: "minecraft:flint_and_steel", Count: nbt_value<1b>}))
+    eval goals.add(new nbt({Slot: nbt_value<18b>, id: "minecraft:ender_eye", Count: nbt_value<8b>}))
+    eval goals.add(new nbt({Slot: nbt_value<19b>, id: "minecraft:coarse_dirt", Count: nbt_value<64b>}))
+    eval goals.add(new nbt({Slot: nbt_value<20b>, id: "minecraft:nether_bricks", Count: nbt_value<5b>}))
+    function c:search/goals_save
+    
+    say buh afosduhif
+    
+}
+
 define function tick {
     @ tag tick
     
@@ -253,7 +310,7 @@ define function tick {
         
         if score searching global matches 1 kill @e[type=item]
         
-        set searchFinished->global = 1
+        if score searching global matches 1 set searchFinished->global = 1
         
         for (item in item_list) {
             var item_name = item.itemType.body

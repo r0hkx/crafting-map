@@ -7,7 +7,8 @@ define global class saved_inventory {
     local var m_inv_offhand_box : coordinates
     local var m_inv_upper_box : coordinates
 
-    private p_save() {
+        
+    private reset() {
         # place shulkers if they don't exist
         unless block $m_inv_hotbar_box yellow_shulker_box setblock $m_inv_hotbar_box yellow_shulker_box
         unless block $m_inv_offhand_box yellow_shulker_box setblock $m_inv_offhand_box yellow_shulker_box
@@ -17,9 +18,10 @@ define global class saved_inventory {
         data remove block $m_inv_hotbar_box Items
         data remove block $m_inv_offhand_box Items
         data remove block $m_inv_upper_box Items
-
-        # copy player inv to storage
-        as @a data modify storage $m_namespace Inventory set from entity @s Inventory
+    }
+    
+    public storage_to_box() {
+        eval reset()
         
         # copy storage to hotbar box
         for (var i = 0; i < 9; i++) {
@@ -43,7 +45,7 @@ define global class saved_inventory {
             data remove storage $m_namespace Inventory[{Slot:$b}]
         }
     }
-        
+    
     private sound() {
         for (var i = 0; i < 5; i++) {
             var r = new Random()
@@ -67,8 +69,14 @@ define global class saved_inventory {
         as @a gamemode creative @s
     }
     
+    public add(slot_item : nbt) {
+        data modify storage $m_namespace Inventory append value $slot_item
+    }
+        
     public save() {
-        eval p_save()
+        eval reset()
+        as @a data modify storage $m_namespace Inventory set from entity @s Inventory
+        eval storage_to_box()
         as @a clear @s
         as @a gamemode $default_gamemode
     }
@@ -77,6 +85,7 @@ define global class saved_inventory {
         as @a clear @s
         as @a gamemode $default_gamemode
     }
+
     
     public new(
         namespace : string,
